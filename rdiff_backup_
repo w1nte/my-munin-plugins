@@ -1,0 +1,127 @@
+#!/usr/bin/env python
+
+# Copyright (c) 2017 w1nte
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+# the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+# WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+#
+# --- How to --------------------------------------------------------------------------
+# This script shows you how many files are be saved and whether rdiff-backup works!
+# To use this plugin, create a new symlink like this
+#   ln -s /your_directory/rdiff_backup_ /etc/munin/plugins/rdiff_backup_home_backup
+# In this case, the folder rdiff-backup-data has to exist in /home/backup
+# -------------------------------------------------------------------------------------
+# Important! Don't forget to change the node config, -> /etc/munin/plugin-conf.d/munin-node,
+# and at last to test it and restart munin-node
+#
+#   [rdiff_backup_*]
+#   user root
+#   group root
+# -------------------------------------------------------------------------------------
+
+import dateutil.parser
+import os
+import re
+import sys
+
+try:
+    import dateutil.parser
+except ImportError:
+    print("You have to install dateutil! Please install python-pip and run 'pip install python-dateutil'")
+
+
+def main():
+    directory = '/' + re.sub(r'rdiff_backup_(.*?)(\.py)?', r'\1', os.path.basename(sys.argv[0])).replace('_', '/')
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'config':
+            print "graph_title Rdiff-Backup {}\n".format(directory),
+            print "graph_vlabel {}\n".format(directory),
+            print "graph_category backup\n",
+            print "graph_args -l 0\n",
+
+            print "IncrementFiles.label Increment Files\n",
+            print "IncrementFiles.type GAUGE\n"
+            print "IncrementFiles.draw AREA\n",
+            print "IncrementFiles.colour COLOUR1\n",  # Blue
+
+            print "newFiles.label New Files\n",
+            print "newFiles.type GAUGE\n"
+            print "newFiles.draw AREA\n",
+            print "newFiles.colour COLOUR0\n",  # Green
+
+            print "DeletedFiles.label Deleted Files\n",
+            print "DeletedFiles.type GAUGE\n"
+            print "DeletedFiles.draw STACK\n",
+            print "DeletedFiles.colour COLOUR7\n",  # Red
+
+            print "ChangedFiles.label Changed Files\n",
+            print "ChangedFiles.type GAUGE\n"
+            print "ChangedFiles.draw STACK\n",
+            print "ChangedFiles.colour COLOUR2\n",  # Orange
+
+            print "Errors.label Error\n",
+            print "Errors.critical :1\n",
+            print "Errors.draw LINE1\n",
+            print "Errors.colour COLOUR15\n",  # Dark Red
+            return True
+        else:
+            directory = sys.argv[1]
+
+    try:
+        data = read_statistics_data(os.path.join(directory, 'rdiff-backup-data/'))
+
+        print "IncrementFiles.value {}\n".format(data['IncrementFiles']),
+        print "newFiles.value {}\n".format(data['NewFiles']),
+        print "DeletedFiles.value {}\n".format(data['DeletedFiles']),
+        print "ChangedFiles.value {}\n".format(data['ChangedFiles']),
+        print "Errors.value {}\n".format(data['Errors']),
+    except IndexError:
+        pass
+
+
+def get_rdiff_file(type, folder, offset=0):
+
+    files = []
+    for f in map(lambda d: d.split('.'), os.listdir(folder)):
+        if len(f) == 3:
+            (name, date, ext) = f
+            if type == name:
+                files.append({
+                    'file': os.path.join(folder, "{}.{}.{}".format(name, date, ext)),
+                    'name': name,
+                    'date': dateutil.parser.parse(date.replace('_', ':'))
+                })
+
+    files.sort(key=lambda x: x['date'].timetuple())
+    files.reverse()
+
+    return files[offset]['file']
+
+
+def read_statistics_data(folder):
+
+    file = get_rdiff_file('session_statistics', folder)
+
+    d = {}
+    with open(file, 'r') as f:
+        c = f.read()
+        for val in map(lambda x: x.split(" "), c.split("\n")):
+            if len(val) > 1:
+                d[val[0]] = val[1]
+    return d
+
+
+if __name__ == '__main__':
+
+    main()
