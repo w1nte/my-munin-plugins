@@ -29,7 +29,7 @@ def main():
     try:
         directory = os.environ['dir']
     except KeyError:
-        sys.stderr.write("Environmental Variable 'dir' is required! See Github Wiki for more information!")
+        sys.stderr.write("Environmental Variable 'dir' is required! See doc/rdiff_backup.md for more information!")
         return
 
     name = re.sub(r'rdiff_backup_(.*?)(\.py)?', r'\1', os.path.basename(sys.argv[0]))
