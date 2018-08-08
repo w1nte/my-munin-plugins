@@ -1,4 +1,6 @@
 # rdiff_backup_
+This Munin Plugin logs the rdiff_backup statistic data.
+So you can easily see how many files were changed, removed, incremented or added.
 
 ## Installation
 see [README.md](../README.md)
