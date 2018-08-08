@@ -32,7 +32,7 @@ def main():
         sys.stderr.write("Environmental Variable 'dir' is required! See Github Wiki for more information!")
         return
 
-    name = '/' + re.sub(r'rdiff_backup_(.*?)(\.py)?', r'\1', os.path.basename(sys.argv[0]))
+    name = re.sub(r'rdiff_backup_(.*?)(\.py)?', r'\1', os.path.basename(sys.argv[0]))
 
     if len(sys.argv) == 2:
         if sys.argv[1] == 'config':
