@@ -34,7 +34,6 @@
 # Finally test the plugin with 'munin-run -d rdiff_backup_home'
 # -------------------------------------------------------------------------------------
 
-import dateutil.parser
 import os
 import sys
 
@@ -42,6 +41,7 @@ try:
     import dateutil.parser
 except ImportError:
     sys.stderr.write("You have to install dateutil! Install python-pip and run 'pip install python-dateutil'")
+    exit()
 
 
 def main():
