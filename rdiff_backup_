@@ -33,35 +33,37 @@ def main():
 
     if len(sys.argv) == 2:
         if sys.argv[1] == 'config':
-            print("graph_title Rdiff-Backup {}\n".format(directory))
-            print("graph_vlabel {}\n".format(directory))
-            print("graph_category backup\n")
-            print("graph_args -l 0\n")
+            sys.stdout.write("graph_title Rdiff-Backup {}\n".format(directory))
+            sys.stdout.write("graph_vlabel {}\n".format(directory))
+            sys.stdout.write("graph_category backup\n")
+            sys.stdout.write("graph_args -l 0\n")
 
-            print("IncrementFiles.label Increment Files\n")
-            print("IncrementFiles.type GAUGE\n")
-            print("IncrementFiles.draw AREA\n")
-            print("IncrementFiles.colour COLOUR1\n")  # Blue
+            sys.stdout.write("IncrementFiles.label Increment Files\n")
+            sys.stdout.write("IncrementFiles.type GAUGE\n")
+            sys.stdout.write("IncrementFiles.draw AREA\n")
+            sys.stdout.write("IncrementFiles.colour COLOUR1\n")  # Blue
 
-            print("newFiles.label New Files\n")
-            print("newFiles.type GAUGE\n")
-            print("newFiles.draw AREA\n")
-            print("newFiles.colour COLOUR0\n")  # Green
+            sys.stdout.write("newFiles.label New Files\n")
+            sys.stdout.write("newFiles.type GAUGE\n")
+            sys.stdout.write("newFiles.draw AREA\n")
+            sys.stdout.write("newFiles.colour COLOUR0\n")  # Green
 
-            print("DeletedFiles.label Deleted Files\n")
-            print("DeletedFiles.type GAUGE\n")
-            print("DeletedFiles.draw STACK\n")
-            print("DeletedFiles.colour COLOUR7\n")  # Red
+            sys.stdout.write("DeletedFiles.label Deleted Files\n")
+            sys.stdout.write("DeletedFiles.type GAUGE\n")
+            sys.stdout.write("DeletedFiles.draw STACK\n")
+            sys.stdout.write("DeletedFiles.colour COLOUR7\n")  # Red
 
-            print("ChangedFiles.label Changed Files\n")
-            print("ChangedFiles.type GAUGE\n")
-            print("ChangedFiles.draw STACK\n")
-            print("ChangedFiles.colour COLOUR2\n")  # Orange
+            sys.stdout.write("ChangedFiles.label Changed Files\n")
+            sys.stdout.write("ChangedFiles.type GAUGE\n")
+            sys.stdout.write("ChangedFiles.draw STACK\n")
+            sys.stdout.write("ChangedFiles.colour COLOUR2\n")  # Orange
 
-            print("Errors.label Error\n")
-            print("Errors.critical :1\n")
-            print("Errors.draw LINE1\n")
-            print("Errors.colour COLOUR15\n")  # Dark Red
+            sys.stdout.write("Errors.label Error\n")
+            sys.stdout.write("Errors.critical :1\n")
+            sys.stdout.write("Errors.draw LINE1\n")
+            sys.stdout.write("Errors.colour COLOUR15\n")  # Dark Red
+
+            sys.stdout.flush()
             return True
         else:
             directory = sys.argv[1]
@@ -69,11 +71,13 @@ def main():
     try:
         data = read_statistics_data(os.path.join(directory, 'rdiff-backup-data/'))
 
-        print("IncrementFiles.value {}\n".format(data['IncrementFiles']))
-        print("newFiles.value {}\n".format(data['NewFiles']))
-        print("DeletedFiles.value {}\n".format(data['DeletedFiles']))
-        print("ChangedFiles.value {}\n".format(data['ChangedFiles']))
-        print("Errors.value {}\n".format(data['Errors']))
+        sys.stdout.write("IncrementFiles.value {}\n".format(data['IncrementFiles']))
+        sys.stdout.write("newFiles.value {}\n".format(data['NewFiles']))
+        sys.stdout.write("DeletedFiles.value {}\n".format(data['DeletedFiles']))
+        sys.stdout.write("ChangedFiles.value {}\n".format(data['ChangedFiles']))
+        sys.stdout.write("Errors.value {}\n".format(data['Errors']))
+
+        sys.stdout.flush()
     except IndexError:
         pass
 
