@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2018 w1nte
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -16,18 +16,22 @@
 #
 #
 # --- How to --------------------------------------------------------------------------
-# This script shows you how many files are be saved and whether rdiff-backup works!
-# To use this plugin, create a new symlink like this
-#   ln -s /your_directory/rdiff_backup_ /etc/munin/plugins/rdiff_backup_home_backup
-# In this case, the folder rdiff-backup-data has to exist in /home/backup
-# -------------------------------------------------------------------------------------
-# Important! Don't forget to change the node config, -> /etc/munin/plugin-conf.d/munin-node,
-# and at last to test it and restart munin-node
 #
-#   [rdiff_backup_*]
-#   user root
-#   group root
-#   env.dir
+# After downloading, it's recommended to place the plugin in directory /usr/local/munin/lib/plugins
+# make it executable and create a symbolic link to /etc/munin/plugins/
+# for instance: 'ln -s /usr/local/munin/lib/plugins/rdiff_backup_ /etc/munin/plugins/rdiff_backup_home'
+# next, create a file rdiff-backup-myconf in /etc/munin/ to configure the plugin.
+# The content of the config should look like this:
+#
+# [rdiff_backup_*]
+#     user root
+#     group root
+#
+# [rdiff_backup_home]
+#     env.dir /home
+#
+#
+# Finally test the plugin with 'munin-run -d rdiff_backup_home'
 # -------------------------------------------------------------------------------------
 
 import dateutil.parser
@@ -96,13 +100,13 @@ def main():
         pass
 
 
-def get_rdiff_file(type, folder, offset=0):
+def get_rdiff_file(rdiff_type, folder, offset=0):
 
     files = []
     for f in map(lambda d: d.split('.'), os.listdir(folder)):
         if len(f) == 3:
             (name, date, ext) = f
-            if type == name:
+            if rdiff_type == name:
                 files.append({
                     'file': os.path.join(folder, "{}.{}.{}".format(name, date, ext)),
                     'name': name,
@@ -117,10 +121,10 @@ def get_rdiff_file(type, folder, offset=0):
 
 def read_statistics_data(folder):
 
-    file = get_rdiff_file('session_statistics', folder)
+    rdiff_file = get_rdiff_file('session_statistics', folder)
 
     d = {}
-    with open(file, 'r') as f:
+    with open(rdiff_file, 'r') as f:
         c = f.read()
         for val in map(lambda x: x.split(" "), c.split("\n")):
             if len(val) > 1:
