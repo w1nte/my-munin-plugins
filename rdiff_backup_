@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2018 w1nte
+# Copyright (c) 2018 Michael Winterspacher
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 # documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -13,26 +13,6 @@
 # WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-#
-# --- How to --------------------------------------------------------------------------
-#
-# After downloading, it's recommended to place the plugin in directory /usr/local/munin/lib/plugins
-# make it executable and create a symbolic link to /etc/munin/plugins/
-# for instance: 'ln -s /usr/local/munin/lib/plugins/rdiff_backup_ /etc/munin/plugins/rdiff_backup_home'
-# next, create a file rdiff-backup-myconf in /etc/munin/ to configure the plugin.
-# The content of the config should look like this:
-#
-# [rdiff_backup_*]
-#     user root
-#     group root
-#
-# [rdiff_backup_home]
-#     env.dir /home
-#
-#
-# Finally test the plugin with 'munin-run -d rdiff_backup_home'
-# -------------------------------------------------------------------------------------
 
 import os
 import sys
@@ -40,7 +20,7 @@ import sys
 try:
     import dateutil.parser
 except ImportError:
-    sys.stderr.write("You have to install dateutil! Install python-pip and run 'pip install python-dateutil'")
+    sys.stderr.write("You have to install dateutil! Install python3-pip and run 'pip3 install python-dateutil'")
     exit()
 
 
@@ -48,42 +28,40 @@ def main():
     try:
         directory = os.environ['dir']
     except KeyError:
-        sys.stderr.write("Environmental Variable 'dir' is required!")
+        sys.stderr.write("Environmental Variable 'dir' is required! See Github Wiki for more information!")
         return
-
-    #directory = '/' + re.sub(r'rdiff_backup_(.*?)(\.py)?', r'\1', os.path.basename(sys.argv[0])).replace('_', '/') TODO: old way
 
     if len(sys.argv) == 2:
         if sys.argv[1] == 'config':
-            print "graph_title Rdiff-Backup {}\n".format(directory),
-            print "graph_vlabel {}\n".format(directory),
-            print "graph_category backup\n",
-            print "graph_args -l 0\n",
+            print("graph_title Rdiff-Backup {}\n".format(directory))
+            print("graph_vlabel {}\n".format(directory))
+            print("graph_category backup\n")
+            print("graph_args -l 0\n")
 
-            print "IncrementFiles.label Increment Files\n",
-            print "IncrementFiles.type GAUGE\n"
-            print "IncrementFiles.draw AREA\n",
-            print "IncrementFiles.colour COLOUR1\n",  # Blue
+            print("IncrementFiles.label Increment Files\n")
+            print("IncrementFiles.type GAUGE\n")
+            print("IncrementFiles.draw AREA\n")
+            print("IncrementFiles.colour COLOUR1\n")  # Blue
 
-            print "newFiles.label New Files\n",
-            print "newFiles.type GAUGE\n"
-            print "newFiles.draw AREA\n",
-            print "newFiles.colour COLOUR0\n",  # Green
+            print("newFiles.label New Files\n")
+            print("newFiles.type GAUGE\n")
+            print("newFiles.draw AREA\n")
+            print("newFiles.colour COLOUR0\n")  # Green
 
-            print "DeletedFiles.label Deleted Files\n",
-            print "DeletedFiles.type GAUGE\n"
-            print "DeletedFiles.draw STACK\n",
-            print "DeletedFiles.colour COLOUR7\n",  # Red
+            print("DeletedFiles.label Deleted Files\n")
+            print("DeletedFiles.type GAUGE\n")
+            print("DeletedFiles.draw STACK\n")
+            print("DeletedFiles.colour COLOUR7\n")  # Red
 
-            print "ChangedFiles.label Changed Files\n",
-            print "ChangedFiles.type GAUGE\n"
-            print "ChangedFiles.draw STACK\n",
-            print "ChangedFiles.colour COLOUR2\n",  # Orange
+            print("ChangedFiles.label Changed Files\n")
+            print("ChangedFiles.type GAUGE\n")
+            print("ChangedFiles.draw STACK\n")
+            print("ChangedFiles.colour COLOUR2\n")  # Orange
 
-            print "Errors.label Error\n",
-            print "Errors.critical :1\n",
-            print "Errors.draw LINE1\n",
-            print "Errors.colour COLOUR15\n",  # Dark Red
+            print("Errors.label Error\n")
+            print("Errors.critical :1\n")
+            print("Errors.draw LINE1\n")
+            print("Errors.colour COLOUR15\n")  # Dark Red
             return True
         else:
             directory = sys.argv[1]
@@ -91,11 +69,11 @@ def main():
     try:
         data = read_statistics_data(os.path.join(directory, 'rdiff-backup-data/'))
 
-        print "IncrementFiles.value {}\n".format(data['IncrementFiles']),
-        print "newFiles.value {}\n".format(data['NewFiles']),
-        print "DeletedFiles.value {}\n".format(data['DeletedFiles']),
-        print "ChangedFiles.value {}\n".format(data['ChangedFiles']),
-        print "Errors.value {}\n".format(data['Errors']),
+        print("IncrementFiles.value {}\n".format(data['IncrementFiles']))
+        print("newFiles.value {}\n".format(data['NewFiles']))
+        print("DeletedFiles.value {}\n".format(data['DeletedFiles']))
+        print("ChangedFiles.value {}\n".format(data['ChangedFiles']))
+        print("Errors.value {}\n".format(data['Errors']))
     except IndexError:
         pass
 
