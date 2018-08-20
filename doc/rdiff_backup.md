@@ -1,6 +1,7 @@
 # rdiff_backup_
 This Munin Plugin logs the rdiff_backup statistic data.
 So you can easily see how many files were changed, removed, incremented or added.
+Please note that this is a wildcard plugin. See [Wildcard-Plugins](http://guide.munin-monitoring.org/en/latest/tutorial/wildcard-plugins.html) for more information.
 
 ## Installation
 see [README.md](../README.md)
