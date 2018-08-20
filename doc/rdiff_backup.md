@@ -4,6 +4,7 @@ So you can easily see how many files were changed, removed, incremented or added
 
 ## Installation
 see [README.md](../README.md)
+
 \* Please note that this is a wildcard plugin. See [Wildcard-Plugins](http://guide.munin-monitoring.org/en/latest/tutorial/wildcard-plugins.html) for more information.
 
 ## Dependencies
