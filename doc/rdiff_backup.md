@@ -12,7 +12,7 @@ see [README.md](../README.md)
 * python3-dateutil
 
 ## Configuration
-Create a new file `rdiff_backup_` in `/etc/munin/plugin-conf.d`.
+Create a configuration file `rdiff_backup_` in `/etc/munin/plugin-conf.d`.
 ```config
 [rdiff_backup_*]
     user root
