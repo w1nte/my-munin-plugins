@@ -1,5 +1,5 @@
 # rdiff_backup_
-This Munin Plugin logs the rdiff_backup statistic data.
+This Munin plugin logs the rdiff_backup statistic data.
 So you can easily see how many files were changed, removed, incremented or added.
 
 ## Installation
@@ -20,5 +20,5 @@ Create a configuration file `rdiff_backup` in `/etc/munin/plugin-conf.d`.
     group root
 
 [rdiff_backup_backupfolder]
-    env.dir /path/to/backupfolder/rdiff-backup-data
+    env.dir /path/to/backupfolder
 ```
