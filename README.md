@@ -1,43 +1,53 @@
-# My Munin Plugins
-All my munin plugins I developed.
-
-##### Overview
-* [rdiff_backup_](doc/rdiff_backup.md)
+# Rdiff-Backup Munin Plugin
+This Munin plugin logs the rdiff_backup statistic data. So you can easily see how many files were changed, removed, incremented or added.
 
 ## Installation
-#### Download Repository with Github (Recommended)
+#### Download repository via Github (recommended)
 ```bash
-git clone https://github.com/w1nte/My-munin-plugins.git /usr/local/munin/lib/plugins/my-munin-plugins
+git clone https://github.com/w1nte/rdiff-munin-plugin.git /usr/local/munin/lib/plugins/rdiff-munin-plugin
 ```
 
-#### Download single file
+#### Or download single file
 ```bash
-wget https://raw.githubusercontent.com/w1nte/My-munin-plugins/master/rdiff_backup_ /usr/local/munin/lib/plugins
+wget https://raw.githubusercontent.com/w1nte/rdiff-munin-plugin/master/rdiff_backup_ /usr/local/munin/lib/plugins
 ```
 
 ## Configuration
 
-#### Add plugin
-Create a symbolic link to activate the plugin.
-```bash
-ln -s /usr/local/munin/lib/plugins/my-munin-plugins/rdiff_backup_ /etc/munin/plugins/rdiff_backup_Test
-```
-
-#### Change permission
+#### 1. Change permission
 Use `chmod a+x` to make the plugin executable.
 ```bash
-chmod a+x /usr/local/munin/lib/plugins/my-munin-plugins/rdiff_backup_
+chmod a+x /usr/local/munin/lib/plugins/rdiff-munin-plugin/rdiff_backup_
 ```
 
-#### Config the Plugin and satisfy the Dependencies.
-* [rdiff_backup_](doc/rdiff_backup.md)
+#### 2. Enable plugin
+Create a symbolic link `rdiff_backup_<folder>` in `/etc/munin/plugins/` for each backup folder *.
+```bash
+ln -s /usr/local/munin/lib/plugins/rdiff-munin-plugin/rdiff_backup_ /etc/munin/plugins/rdiff_backup_folder1
+```
+<sup>\* Please note that this is a wildcard plugin. See [Wildcard-Plugins](http://guide.munin-monitoring.org/en/latest/tutorial/wildcard-plugins.html) for more information.</sup>
 
-#### Restart Munin Node
+#### 3. Configure plugins
+Create a configuration file `rdiff_backup` in `/etc/munin/plugin-conf.d`. 
+```config
+[rdiff_backup_*]
+    user root
+    group root
+
+[rdiff_backup_folder1]
+    env.dir /path/to/backupfolder
+```
+#### 4. Install requirements
+Install the dependencies if required:
+* python3
+* python3-dateutil
+
+#### 5. Restart Munin-node
 ```bash
 service munin-node restart
 ```
 
-#### Test the Plugin
+#### 6. Test the plugins
 ```bash
-munin-run -d rdiff_backup_Test
+munin-run -d rdiff_backup_folder1
 ```
